@@ -4,14 +4,20 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
+const TodoTask = require("./models/ToDoTask");
 
 const app = express();
+
+//use the stylesheets
+
+app.use("/static", express.static("public"));
 
 // Passport Config
 require("./config/passport")(passport);
 
-// DB Config
+// // DB Config
 const db = require("./config/keys").mongoURI;
+// mongoose.set("useFindAndModify", false);
 
 // Connect to MongoDB
 mongoose
@@ -70,6 +76,23 @@ app.use(function (req, res, next) {
 app.use("/", require("./routes/index.js"));
 app.use("/users", require("./routes/users.js"));
 
-const PORT = process.env.PORT || 3000;
+//GET METHOD
+app.get("/dashboard", (req, res) => {
+  TodoTask.find({}, (err, tasks) => {
+    res.render("todo.ejs", { todoTasks: tasks });
+  });
+});
 
-app.listen(PORT, console.log(`Server running on  ${PORT}`));
+app.post("/dashboard", async (req, res) => {
+  const todoTask = new TodoTask({
+    content: req.body.content,
+  });
+  try {
+    await todoTask.save();
+    res.redirect("/dashboard");
+  } catch (err) {
+    res.redirect("/dashboard");
+  }
+});
+
+app.listen(3000, console.log(`Server running on 3000`));

@@ -14,18 +14,23 @@
   />
 </head>
 <body>
-  <h1 class="mt-4">Dashboard</h1>
-  <p class="lead mb-3">Welcome <b><%= user.name %></b></p>
-  <a href="/users/logout" class="btn btn-secondary">Logout</a>
   <div class="todo-container">
     <h2>To-Do List</h2>
     <div class="todo">
-      <form action="/dashboard" method="POST" class="todo-header">
+      <form action="" method="POST" class="todo-header">
         <input type="text" name="content" />
         <button type="submit"><span class="fas fa-plus"></span></button>
       </form>
       <ul class="todo-list">
-        <% todoTasks.forEach(details => { %>
+        <% todoTasks.forEach(details => { %> <% if (details._id == idTask) { %>
+        <li class="todo-list-item">
+          <form action="/edit/<%= details._id %>" method="POST">
+            <input type="text" value="<%= details.content %>" name="content" />
+            <button type="submit">Confirm</button>
+            <a href="/" class="cancel">Cancel</a>
+          </form>
+        </li>
+        <% } else { %>
         <li class="todo-list-item">
           <div class="todo-list-item-name"><%= details.content %></div>
           <a href="/edit/<%= details._id %>" class="edit">
@@ -35,7 +40,7 @@
             <span class="fas fa-times"></span>
           </a>
         </li>
-        <% }) %>
+        <% } %> <% }) %>
       </ul>
     </div>
   </div>

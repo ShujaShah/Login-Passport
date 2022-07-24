@@ -76,23 +76,4 @@ app.use(function (req, res, next) {
 app.use("/", require("./routes/index.js"));
 app.use("/users", require("./routes/users.js"));
 
-//GET METHOD
-// app.get("/dashboard", (req, res) => {
-//   TodoTask.find({}, (err, tasks) => {
-//     res.render("todo.ejs", { todoTasks: tasks });
-//   });
-// });
-
-// app.post("/dashboard", async (req, res) => {
-//   const todoTask = new TodoTask({
-//     content: req.body.content,
-//   });
-//   try {
-//     await todoTask.save();
-//     res.redirect("/dashboard");
-//   } catch (err) {
-//     res.redirect("/dashboard");
-//   }
-// });
-
 app.listen(3000, console.log(`Server running on 3000`));

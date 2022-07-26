@@ -103,3 +103,7 @@
     cursor:pointer;
     text-decoration: none;
     }
+
+    .navbar-dark .navbar-nav .nav-link {
+        color:#fff;
+    }

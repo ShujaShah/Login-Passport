@@ -1,23 +1,37 @@
 const TodoTask = require("../../models/ToDoTask");
 const TODOS = require("../../models/usecases/todo");
 const todos = require("../../routes/index");
+const session = require("express-session");
 
 module.exports = {
   getAllTodos: function (req, res) {
-    TodoTask.find({}, (err, tasks) => {
-      res.render("todo.ejs", { todoTasks: tasks, user: req.user });
+    TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
+      res.render("todo.ejs", {
+        todoTasks: tasks,
+        user: req.user,
+      });
+      console.log(tasks);
     });
   },
 
   createTodo: async function (req, res) {
     const todoTask = new TodoTask({
       content: req.body.content,
+      user: {
+        id: req.user._id,
+        user: req.user.user,
+      },
     });
     try {
-      await todoTask.save();
+      await todoTask.save(function (err, doc) {
+        if (err) throw err;
+        console.log("item saved!");
+      });
+
       res.redirect("/dashboard");
     } catch (err) {
       res.redirect("/dashboard");
+      console.log(err);
     }
   },
 

@@ -76,4 +76,12 @@ app.use(function (req, res, next) {
 app.use("/", require("./routes/index.js"));
 app.use("/users", require("./routes/users.js"));
 
-app.listen(3000, console.log(`Server running on 3000`));
+//
+passport.serializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+passport.deserializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+
+app.listen(4000, console.log(`Server running on 4000`));

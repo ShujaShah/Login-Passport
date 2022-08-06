@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
+const TodoTask = require("../models/entity/ToDoTask");
 const {
   ensureAuthenticated,
   forwardAuthenticated,
@@ -8,6 +9,7 @@ const {
 
 const { isAdmin } = require("../controller/authentication/adminAuthMiddleware");
 
+const todos = require("../controller/todos/index");
 const {
   getAllTodos,
   createTodo,
@@ -16,8 +18,11 @@ const {
   deleteTodo,
 } = require("../controller/todos/index");
 
+const { getLandingPage } = require("./web/index");
+
 // Welcome Page
-router.get("/", forwardAuthenticated, (req, res) => res.render("landing"));
+//router.get("/", forwardAuthenticated, (req, res) => res.render("landing"));
+router.get("/", forwardAuthenticated, getLandingPage);
 router.get("/dashboard", ensureAuthenticated, getAllTodos);
 router.get("/admin-dashboard", ensureAuthenticated, getAllTodos);
 router.post("/dashboard", createTodo);

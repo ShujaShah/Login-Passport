@@ -1,59 +1,82 @@
-const TodoTask = require("../../models/ToDoTask");
+const TodoTask = require("../../models/entity/ToDoTask");
 const TODOS = require("../../models/usecases/todo");
-const todos = require("../../routes/index");
-const session = require("express-session");
 
 module.exports = {
-  getAllTodos: function (req, res) {
-    TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
-      res.render("todo.ejs", {
-        todoTasks: tasks,
-        user: req.user,
-      });
-      console.log(tasks);
-    });
-  },
+  // getAllTodos: async function (req, res) {
+  //   tasksWithUsers = [{}];
 
-  createTodo: async function (req, res) {
-    const todoTask = new TodoTask({
-      content: req.body.content,
-      user: {
-        id: req.user._id,
-        user: req.user.user,
-      },
-    });
+  //   if (req.user.admin === true) {
+  //     TodoTask.find({}, (err, tasks) => {
+  //       res.render("admin-dashboard.ejs", {
+  //         todoTasks: tasks,
+  //         user: req.user,
+  //       });
+  //     });
+  //   } else {
+  //     TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
+  //       res.render("todo.ejs", {
+  //         todoTasks: tasks,
+  //         user: req.user,
+  //       });
+  //       console.log(tasks);
+  //     });
+  //   }
+  // },
+
+  getAllTodos: async (req, res) => {
     try {
-      await todoTask.save(function (err, doc) {
-        if (err) throw err;
-        console.log("item saved!");
-      });
-
-      res.redirect("/dashboard");
-    } catch (err) {
-      res.redirect("/dashboard");
-      console.log(err);
+      console.log("inside the controller of all todos");
+      let todos = await TODOS.getAllTodos(req, res);
+      return todos;
+    } catch (error) {
+      console.error(error);
     }
   },
 
-  getTodo: async function (req, res) {
-    const id = req.params.id;
-    TodoTask.find({}, (err, tasks) => {
-      res.render("todoEdit.ejs", { todoTasks: tasks, idTask: id });
-    });
-  },
-  editTodo: async function (req, res) {
-    const id = req.params.id;
-    TodoTask.findByIdAndUpdate(id, { content: req.body.content }, (err) => {
-      if (err) return res.send(500, err);
-      res.redirect("/");
-    });
+  createTodo: async (req, res) => {
+    try {
+      let newTODO = await TODOS.createTodo(req, res);
+      return newTODO;
+      if (newTODO) {
+        return await res.status(200).json({ statusCode: "200", newTODO });
+      } else {
+        return await res.status(404).json({ statusCode: "404", newTODO: {} });
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
   },
 
-  deleteTodo: async function (req, res) {
-    const id = req.params.id;
-    TodoTask.findByIdAndRemove(id, (err) => {
-      if (err) return res.send(500, err);
-      res.redirect("/");
-    });
+  getTodo: async (req, res) => {
+    console.log("inside controller particular todo");
+    let particularTODO = await TODOS.getTodo(req, res);
+    return particularTODO;
+    if (particularTODO) {
+      res.status(200).json({ statusCode: "200", particularTODO });
+    } else {
+      res.status(404), json({ statusCode: "404", particularTODO: {} });
+    }
+  },
+
+  editTodo: async (req, res) => {
+    console.log("inside controller edit todo");
+    let editTodo = await TODOS.editTodo(req, res);
+    return editTodo;
+    if (editTodo) {
+      res.status(200).json({ statusCode: "200", editTodo });
+    } else {
+      res.status(404), json({ statusCode: "404", editTodo: {} });
+    }
+  },
+
+  deleteTodo: async (req, res) => {
+    console.log("inside controller of the delete todo");
+    let deleteTodo = await TODOS.deleteTodo(req, res);
+    return deleteTodo;
+    if (deleteTodo) {
+      res.status(200).json({ statusCode: "200", deleteTodo });
+    } else {
+      res.status(404), json({ statusCode: "404", deleteTodo: {} });
+    }
   },
 };

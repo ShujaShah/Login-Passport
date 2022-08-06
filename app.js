@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
-const TodoTask = require("./models/ToDoTask");
+const TodoTask = require("./models/entity/ToDoTask");
 
 const app = express();
 
@@ -84,4 +84,4 @@ passport.deserializeUser(function (user_id, done) {
   done(null, user_id);
 });
 
-app.listen(4000, console.log(`Server running on 4000`));
+app.listen(3000, console.log(`Server running on 3000`));

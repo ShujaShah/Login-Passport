@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
 // Load User model
-const User = require("../models/User");
+const User = require("../models/entity/User");
 const { forwardAuthenticated } = require("../config/auth");
 
 // Login Page
@@ -79,18 +79,35 @@ router.post("/register", (req, res) => {
   }
 });
 
-// Login
-router.post("/login", (req, res, next) => {
+//Login
+// router.post("/login", (req, res, next) => {
+//   passport.authenticate("local", {
+//     successRedirect: "/dashboard",
+//     failureRedirect: "/users/login",
+//     failureFlash: true,
+//   })(req, res, next);
+// });
+
+//Login as per user based role
+router.post(
+  "/login",
   passport.authenticate("local", {
-    successRedirect: "/dashboard",
     failureRedirect: "/users/login",
     failureFlash: true,
-  })(req, res, next);
-});
+  }),
+  function (req, res) {
+    if (req.user.admin === true) {
+      res.redirect("/admin-dashboard");
+    } else {
+      res.redirect("/dashboard");
+    }
+  }
+);
 
 // Logout
 router.get("/logout", (req, res) => {
   req.logout();
+  //req.session.destroy();
   req.flash("success_msg", "You are logged out");
   res.redirect("/users/login");
 });

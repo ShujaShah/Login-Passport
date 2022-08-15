@@ -1,4 +1,5 @@
 const number = require("joi/lib/types/number");
+const string = require("joi/lib/types/string");
 const mongoose = require("mongoose");
 const todoTaskSchema = new mongoose.Schema({
   content: {
@@ -10,11 +11,8 @@ const todoTaskSchema = new mongoose.Schema({
     default: Date.now,
   },
   user: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    user: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
 });
 module.exports = mongoose.model("TodoTask", todoTaskSchema);

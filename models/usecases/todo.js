@@ -1,39 +1,36 @@
 const todo = require("../entity/ToDoTask");
 const TodoTask = require("../../models/entity/ToDoTask");
 
-const getAllTodos = async function (req, res) {
+const getAllTodos = async (req, res) => {
   if (req.user.admin === true) {
-    TodoTask.find({}, (err, tasks) => {
-      return res.render("admin-dashboard.ejs", {
-        todoTasks: tasks,
-        user: req.user,
+    const task = await TodoTask.find({})
+      .populate("user", "name -_id")
+      .exec((err, tasks) => {
+        return res.render("admin-dashboard.ejs", {
+          todoTasks: tasks,
+          displayName: req.user.name,
+        });
       });
-    });
   } else {
     TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
       return res.render("todo.ejs", {
         todoTasks: tasks,
         user: req.user,
       });
-      console.log(tasks);
     });
   }
 };
 
 const createTodo = async function (req, res) {
-  const todoTask = new TodoTask({
+  const todoTask = await new TodoTask({
     content: req.body.content,
-    user: {
-      id: req.user._id,
-      user: req.user.user,
-    },
+    user: req.user._id,
   });
   try {
     await todoTask.save(function (err, doc) {
       if (err) throw err;
       console.log("item saved!");
     });
-
     return res.redirect("/dashboard");
   } catch (err) {
     return res.redirect("/dashboard");
@@ -43,9 +40,14 @@ const createTodo = async function (req, res) {
 
 const getTodo = async function (req, res) {
   const id = req.params.id;
-  TodoTask.find({}, (err, tasks) => {
-    return res.render("todoEdit.ejs", { todoTasks: tasks, idTask: id });
-  });
+  if (req.user.admin === true) {
+    TodoTask.find({}, (err, tasks) => {
+      return res.render("todoEdit.ejs", { todoTasks: tasks, idTask: id });
+    });
+  } else
+    TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
+      return res.render("todoEdit.ejs", { todoTasks: tasks, idTask: id });
+    });
 };
 
 const editTodo = async function (req, res, next) {

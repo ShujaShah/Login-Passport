@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
+const app = express();
 const router = express.Router();
-const TodoTask = require("../models/entity/ToDoTask");
 const {
   ensureAuthenticated,
   forwardAuthenticated,
@@ -28,6 +28,8 @@ router.get("/admin-dashboard", ensureAuthenticated, getAllTodos);
 router.post("/dashboard", createTodo);
 router.route("/edit/:id").get(getTodo).post(editTodo);
 router.route("/remove/:id").get(deleteTodo);
+
+//app.use(require("./api/v1/index"));
 
 router.get("/admin-dashboard", isAdmin, (req, res) =>
   res.render("admin-dashboard")

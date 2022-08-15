@@ -48,7 +48,7 @@
             aria-expanded="false"
           >
             Welcome
-            <b><%= user.name %></b>
+            <b><%= displayName %></b>
           </a>
           <div
             class="dropdown-menu ml-auto"
@@ -82,7 +82,7 @@
           </a>
           <a href="/remove/<%= details._id %>" class="remove">
             <span class="fas fa-times"></span> </a
-          ><%= %>
+          >by &nbsp;<%=details.user.name %>
         </li>
         <% }) %>
       </ul>

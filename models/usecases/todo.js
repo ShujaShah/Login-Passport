@@ -12,11 +12,12 @@ const getAllTodos = async (req, res) => {
         });
       });
   } else {
-    TodoTask.find({ "user.id": req.user._id }, (err, tasks) => {
-      return res.render("todo.ejs", {
+    TodoTask.find({ user: req.user._id }, (err, tasks) => {
+      res.render("todo.ejs", {
         todoTasks: tasks,
         user: req.user,
       });
+      console.log(tasks);
     });
   }
 };
@@ -29,7 +30,7 @@ const createTodo = async function (req, res) {
   try {
     await todoTask.save(function (err, doc) {
       if (err) throw err;
-      console.log("item saved!");
+      console.log("item saved!", todoTask);
     });
     return res.redirect("/dashboard");
   } catch (err) {

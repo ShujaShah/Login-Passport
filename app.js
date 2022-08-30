@@ -6,6 +6,8 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const TodoTask = require("./models/entity/ToDoTask");
 
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
 const app = express();
 
 //use the stylesheets
@@ -57,7 +59,7 @@ app.use(
   })
 );
 
-// Passport middleware
+// Passport middleware 
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -75,6 +77,7 @@ app.use(function (req, res, next) {
 // Routes
 app.use("/", require("./routes/index.js"));
 app.use("/users", require("./routes/users.js"));
+app.use("/auth", require("./routes/oauth.js"));
 
 //
 passport.serializeUser(function (user_id, done) {

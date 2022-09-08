@@ -1,5 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const express = require("express");
@@ -13,6 +14,9 @@ const User = require("../models/entity/User");
 const googleClientId =
   "180692229496-et1kt037fjvhb3na1de8sgh9s99pu6ik.apps.googleusercontent.com";
 const googleClientSecret = "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";
+
+const facebookClientId = "463788468960471";
+const facebookClientSecret = "fad78ecfba7ca4df7878b31c3111b401";
 
 module.exports = function (passport) {
   passport.use(
@@ -73,6 +77,41 @@ module.exports = function (passport) {
       }
     )
   );
+
+  // Facebook OAuth2.0
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: facebookClientId,
+        clientSecret: facebookClientSecret,
+        callbackURL: "http://localhost:3000/auth/facebook/callback",
+        profileFields: ["id", "displayName", "photos", "email"],
+      },
+      function(accessToken, refreshToken, profile, done) {
+        User.findOne({ facebook_id: profile.id }, function(err, user) {
+          if(err) {
+            console.log(err);  
+          }
+          
+          if (user) {
+            done(null, user); 
+          } else { 
+            user = new User({
+              facebook_id: profile.id, 
+              name: profile.displayName
+            });
+            user.save(function(err) { 
+              if(err) {
+                console.log(err);  
+              } else {
+                console.log("saving user ...");
+                done(null, user);
+              }
+            });
+          }
+        });
+      }
+    ));
 
   passport.serializeUser(function (user, done) {
     done(null, user.id);

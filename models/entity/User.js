@@ -1,4 +1,3 @@
-const string = require("joi/lib/types/string");
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
